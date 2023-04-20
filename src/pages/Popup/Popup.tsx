@@ -1,10 +1,11 @@
 import React from "react";
 import "./Popup.css";
+import { HandleTables } from "./components/HandleTables";
 
 const Popup = () => {
   const [html, setHtml] = React.useState<any>(null);
-  const [fetchedHtml, setFetchedHtml] = React.useState<boolean>(false);
   const [isPopoutOpened, setIsPopoutOpened] = React.useState<boolean>(false);
+  const [tableFound, setTableFound] = React.useState<boolean>(false);
 
   const getHtml = () => {};
 
@@ -21,35 +22,31 @@ const Popup = () => {
             },
           })
           .then((html) => {
-            setHtml(html[0].result);
+            let res: string = html[0].result as string;
+            setHtml(res);
             console.log(typeof html[0].result);
-            setFetchedHtml(true);
+            let table = res.search("table");
+            setTableFound(table === -1 ? false : true);
           });
       }
     });
   }, []);
 
-  React.useEffect(() => {
-    // Send a message to the background script when the component mounts
-    chrome.runtime.sendMessage({ type: "POPUP_OPENED" }, (response) => {
-      // Update the state variable when the response is received
-      setIsPopoutOpened(response.isPopoutOpened);
-    });
-  }, [isPopoutOpened]);
-
   return (
-    <div className=" w-[400px] bg-slate-300">
+    <div className=" w-[400px] bg-slate-400 min-h-[400px]">
       <header className="flex flex-wrap">
-        <div className="w-full font-bold text-xl text-center">
-          <p>Afl Tables Export CSV</p>
-        </div>
-        <div className="w-full font-bold text-xl text-center">
-          <p>Got HTML: {`${fetchedHtml}`}</p>
-        </div>
-        <div className="w-full font-bold text-xl text-center">
-          <button onClick={getHtml}>Test</button>
+        <div className="w-full flex h-12 bg-slate-700">
+          <h3 className="my-auto font-bold text-2xl text-white">
+            AFL Tables CSV Scraper
+          </h3>
         </div>
       </header>
+      <div className="w-full font-bold text-xl text-left">
+        <p>{tableFound ? "Tables Gathered" : "No Tables Found"} </p>
+      </div>
+      <div className="w-full">
+        {tableFound ? <HandleTables htmlData={html} /> : null}
+      </div>
     </div>
   );
 };
