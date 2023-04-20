@@ -3,6 +3,8 @@
   "name": "AFL Tables Export",
   "description": "A chrome extension to export AFL tables to a csv file",
   "options_page": "options.html",
+  "permissions": ["tabs", "activeTab", "scripting", "storage", "https://*/*"],
+  "host_permissions": ["https://*/*"],
   "background": { "service_worker": "background.bundle.js" },
   "action": {
     "default_popup": "popup.html",
@@ -13,7 +15,7 @@
   },
   "content_scripts": [
     {
-      "matches": ["https://afltables.com/*"],
+      "matches": ["https://*/*"],
       "js": ["contentScript.bundle.js"],
       "css": ["content.styles.css"]
     }
